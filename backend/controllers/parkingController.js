@@ -9,10 +9,10 @@ const LIMITS = {
 
 const getSlots=(req,res)=>{
     const sql=`
-    SELECT vechile_type, COUNT(*) AS occupied
+    SELECT vehicle_type, COUNT(*) AS occupied
     FROM tickets 
     WHERE status = 'parked' GROUP BY
-    vechile_type
+    vehicle_type
     `;
 
     db.query(sql,(err,results)=>{
@@ -31,7 +31,7 @@ const getSlots=(req,res)=>{
         };
 
         results.forEach((row)=>{
-            occupied[row.vechile_type]= row.occupied;
+            occupied[row.vehicle_type]= row.occupied;
         });
         
         const response = {
@@ -52,4 +52,61 @@ const getSlots=(req,res)=>{
     });    
 };
 
-module.exports={getSlots};
+const parkVehicle = (req,res)=>{
+    const {vehicleNumber,vehicleType}= req.body;
+    if(!vehicleNumber || !vehicleType){
+        return res.status(400).json({
+            success: false,
+            message: 'Vehicle number and vehicle type are required'
+        });
+    }
+
+    const validTypes=["bike","car","truck"];
+    if(!validTypes.includes(vehicleType)){
+        return res.status(400).json({
+            success : false,
+            message : 'Invalid vehicle type'
+        });
+    }
+
+    const checkVehicleQuery=`
+    SELECT * FROM tickets 
+    WHERE vehicle_number = ?
+    AND status ='parked'
+    `;
+
+    db.query(checkVehicleQuery,[vehicleNumber],(err,result)=>{
+        if(err){
+            return res.status(500).json({
+                success : false,
+                message: 'Database Error'
+            });
+        }
+        if(result.length > 0){
+                return res.status(400).json({
+                    success: false,
+                    message: 'Vehicle is already parked'
+            });
+        }
+        const slotQuery=`Select count(*)
+        as occupied from tickets where 
+        vehicle_type = ? ans status = 'parked'`;
+        db.query(slotQuery,[vehicleType],(err,slotResult)=>{
+            if(err){
+                return res.status(500).json({
+                    success : false,
+                    message: 'Database Error'
+                });
+            }
+            const occupied = slotResult[0].occupied;
+            if(occupied >= LIMITS[vehicleType]){
+                return res.status(409).json({
+                    succes: false,
+                    message: 'Parking Full'
+                });
+            }
+        })
+    });
+};
+
+module.exports={getSlots,parkVehicle};

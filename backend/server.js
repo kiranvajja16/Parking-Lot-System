@@ -15,4 +15,9 @@ app.get('/',(req,res)=>{
     res.send('parking Lot Backend is running..');
 });
 
-app.use('')
+app.use('/api',parkingRoutes);
+
+const PORT=process.env.PORT || 5000;
+app.listen(PORT,()=>{
+    console.log('Server is running on port '+PORT);
+})

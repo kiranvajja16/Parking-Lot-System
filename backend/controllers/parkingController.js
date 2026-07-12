@@ -210,6 +210,7 @@ const exitVehicle = (req,res)=>{
                 receipt:{
                     ticketId:ticket.ticket_id,
                     vehicleNumber: ticket.vehicle_number,
+                    vehicleType:ticket.vehicle_type,
                     entryTime: ticket.entry_time,
                     exitTime,
                     durationHours,
@@ -225,7 +226,7 @@ const getParkedVehicles =(req,res)=>{
     select ticket_id,vehicle_number,
     vehicle_type,entry_time from tickets
     where status = 'parked'
-    order by entry_tiem asc
+    order by entry_time asc
     `;
 
     db.query(query,(err,result)=>{
@@ -242,7 +243,7 @@ const getParkedVehicles =(req,res)=>{
             entryTime: row.entry_time
         }));
 
-        res.status(200).json(vehicles);
+        res.status(200).json(vehicle);
     });
 };
 

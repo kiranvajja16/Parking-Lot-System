@@ -137,4 +137,14 @@ const parkVehicle = (req,res)=>{
     });
 };
 
-module.exports={getSlots,parkVehicle};
+const exitVehicle = (req,res)=>{
+    const {ticketId,vehicleNumber}=req.body;
+    if(!ticketId || !vehicleNumber){
+        return res.status(400).json({
+            success : false,
+            message : "Ticket ID or vehicle Number is required"
+        });
+    }
+};
+
+module.exports={getSlots,parkVehicle,exitVehicle};

@@ -139,12 +139,111 @@ const parkVehicle = (req,res)=>{
 
 const exitVehicle = (req,res)=>{
     const {ticketId,vehicleNumber}=req.body;
-    if(!ticketId || !vehicleNumber){
+    if(!ticketId && !vehicleNumber){
         return res.status(400).json({
             success : false,
             message : "Ticket ID or vehicle Number is required"
         });
     }
+    let findQuery;
+    let value;
+    if(ticketId){
+        findQuery=`
+        select * from tickets
+        where ticket_id=?
+        and status="parked"
+        `;
+        value=ticketId;
+    }
+    else{
+        findQuery=`
+        select * from tickets where vehicle_number=?
+        and status = 'parked'`;
+        value=vehicleNumber;
+    }
+    db.query(findQuery,[value],(err,result)=>{
+        if(err){
+            return res.status(500).json({
+                success:false,
+                message: "Database Error"
+            });
+        }
+        if(result.length===0){
+            return res.status(404).json({
+                success: false,
+                message: "Ticket not found or already exited"
+            });
+        }
+        const ticket = result[0];
+
+        const exitTime = new Date();
+        const entryTime = new Date(ticket.entry_time);
+
+        const durationMs = exitTime - entryTime;
+
+        const durationHours = Math.ceil(
+            durationMs / (1000 * 60 * 60)
+        );
+
+        let amount;
+
+        if (durationHours <= 3) {
+            amount = 30;
+        } else if (durationHours <= 6) {
+            amount = 85;
+        } else {
+            amount = 120;
+        }
+        const updateQuery=`UPDATE tickets SET exit_time = ?,
+        amount = ?, status='exited' where id=?`;
+
+        db.query(updateQuery,[exitTime,amount,ticket.id],(err)=>{
+            if(err){
+                return res.status(500).json({
+                    success: false,
+                    message: 'Database Error'
+                });
+            }
+
+            return res.status(200).json({
+                success:true,
+                receipt:{
+                    ticketId:ticket.ticket_id,
+                    vehicleNumber: ticket.vehicle_number,
+                    entryTime: ticket.entry_time,
+                    exitTime,
+                    durationHours,
+                    amount
+                }
+            });
+        })
+    })
 };
 
-module.exports={getSlots,parkVehicle,exitVehicle};
+const getParkedVehicles =(req,res)=>{
+    const query=`
+    select ticket_id,vehicle_number,
+    vehicle_type,entry_time from tickets
+    where status = 'parked'
+    order by entry_tiem asc
+    `;
+
+    db.query(query,(err,result)=>{
+        if(err){
+            return res.status(500).json({
+                success : false,
+                message : 'Database Error'
+            });
+        }
+        const vehicle= result.map((row)=>({
+            ticketId:row.ticket_id,
+            vehicleNumber: row.vehicle_number,
+            vehicleType:row.vehicle_type,
+            entryTime: row.entry_time
+        }));
+
+        res.status(200).json(vehicles);
+    });
+};
+
+module.exports={getSlots,parkVehicle,exitVehicle,getParkedVehicles};

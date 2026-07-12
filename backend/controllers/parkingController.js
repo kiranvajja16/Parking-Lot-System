@@ -90,7 +90,7 @@ const parkVehicle = (req,res)=>{
         }
         const slotQuery=`Select count(*)
         as occupied from tickets where 
-        vehicle_type = ? ans status = 'parked'`;
+        vehicle_type = ? and status = 'parked'`;
         db.query(slotQuery,[vehicleType],(err,slotResult)=>{
             if(err){
                 return res.status(500).json({
@@ -101,10 +101,38 @@ const parkVehicle = (req,res)=>{
             const occupied = slotResult[0].occupied;
             if(occupied >= LIMITS[vehicleType]){
                 return res.status(409).json({
-                    succes: false,
+                    success: false,
                     message: 'Parking Full'
                 });
             }
+            const ticketId = "TKT-" + Date.now();
+            const insertQuery = `
+            insert into tickets(
+            ticket_id,
+            vehicle_number,
+            vehicle_type,
+            entry_time,
+            status)
+            values (?,?,?,NOW(),'parked')`;
+            db.query(insertQuery,[ticketId,vehicleNumber,vehicleType],(err)=>{
+                if (err) {
+                    console.log(err);  
+                    return res.status(500).json({
+                    success: false,
+                    message: "Database Error",
+                    error: err.message
+                });
+}
+                return res.status(201).json({
+                    success : true,
+                    ticket:{
+                        ticketId,
+                        vehicleNumber,
+                        vehicleType,
+                        entryTime : new Date()
+                    }
+                });
+            })
         })
     });
 };

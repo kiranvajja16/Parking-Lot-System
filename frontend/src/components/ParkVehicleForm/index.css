@@ -1,0 +1,57 @@
+.park-form{
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(15px);
+    border-radius:20px;
+    padding:25px;
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+    margin-bottom:30px;
+    color:white;
+}
+
+.park-form h2{
+    margin-bottom:20px;
+    text-align:center;
+    font-size:28px;
+}
+
+.park-form form{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.park-form input,
+.park-form select{
+    width:100%;
+    padding:14px;
+    border:none;
+    outline:none;
+    border-radius:12px;
+    font-size:16px;
+    background:white;
+    color:black;
+}
+
+.park-form button{
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg,#00c853,#64dd17);
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.park-form button:hover{
+    transform:translateY(-3px);
+    box-shadow:0 8px 20px rgba(0,0,0,.3);
+}
+
+.message{
+    margin-top:15px;
+    text-align:center;
+    font-size:17px;
+    font-weight:bold;
+}

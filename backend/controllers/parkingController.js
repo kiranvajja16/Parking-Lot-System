@@ -51,7 +51,10 @@ const getSlots=(req,res)=>{
                 available : LIMITS.truck - occupied.truck,
             },
         };
-        res.json(response);
+        return res.status(200).json({
+    success: true,
+    slots: response
+});
     });    
 };
 

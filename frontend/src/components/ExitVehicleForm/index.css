@@ -1,0 +1,91 @@
+.exit-form{
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(15px);
+    border-radius:20px;
+    padding:25px;
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+    color:white;
+}
+
+.exit-form h2{
+    text-align:center;
+    margin-bottom:20px;
+    font-size:28px;
+}
+
+.exit-form form{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.exit-form input{
+    width:100%;
+    padding:14px;
+    border:none;
+    outline:none;
+    border-radius:12px;
+    font-size:16px;
+    background:white;
+    color:black;
+}
+
+.exit-form p{
+    text-align:center;
+    font-weight:bold;
+    color:white;
+}
+
+.exit-form button{
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg,#ff416c,#ff4b2b);
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.exit-form button:hover{
+    transform:translateY(-3px);
+    box-shadow:0 8px 20px rgba(0,0,0,.3);
+}
+
+.error{
+    margin-top:15px;
+    text-align:center;
+    color:#ffe5e5;
+    font-weight:bold;
+}
+
+.receipt{
+    margin-top:25px;
+    background:white;
+    color:#333;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 8px 20px rgba(0,0,0,.2);
+}
+
+.receipt h3{
+    text-align:center;
+    color:#ff4b2b;
+    margin-bottom:15px;
+}
+
+.receipt p{
+    display:flex;
+    justify-content:space-between;
+    color:#333;
+    padding:8px 0;
+    border-bottom:1px solid #eee;
+}
+
+.receipt p:last-child{
+    border-bottom:none;
+    font-size:20px;
+    font-weight:bold;
+    color:#16a34a;
+}

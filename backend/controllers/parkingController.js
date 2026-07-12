@@ -1,4 +1,7 @@
 const db = require('../config/db');
+const calculateFare = require("../utils/fare");
+
+
 
 const LIMITS = {
     bike :5,
@@ -185,15 +188,7 @@ const exitVehicle = (req,res)=>{
             durationMs / (1000 * 60 * 60)
         );
 
-        let amount;
-
-        if (durationHours <= 3) {
-            amount = 30;
-        } else if (durationHours <= 6) {
-            amount = 85;
-        } else {
-            amount = 120;
-        }
+        const amount = calculateFare(durationHours);
         const updateQuery=`UPDATE tickets SET exit_time = ?,
         amount = ?, status='exited' where id=?`;
 
@@ -236,14 +231,17 @@ const getParkedVehicles =(req,res)=>{
                 message : 'Database Error'
             });
         }
-        const vehicle= result.map((row)=>({
+        const vehicles= result.map((row)=>({
             ticketId:row.ticket_id,
             vehicleNumber: row.vehicle_number,
             vehicleType:row.vehicle_type,
             entryTime: row.entry_time
         }));
 
-        res.status(200).json(vehicle);
+        res.status(200).json({
+            success:true,
+            vehicles
+        }); 
     });
 };
 
